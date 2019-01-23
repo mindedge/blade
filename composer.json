@@ -2,7 +2,6 @@
   "name": "mindedge/atutor-container",
   "description": "A Laravel Container wrapper for atutor",
   "type": "library",
-  "minimum-stability": "stable",
   "authors": [
     {
       "name": "Mindedge Teach Team",
