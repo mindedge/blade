@@ -1,0 +1,21 @@
+{
+  "name": "mindedge/atutor-container",
+  "description": "A Laravel Container wrapper for atutor",
+  "type": "library",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Mindedge Teach Team",
+      "email": "tech@mindedge.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Mindedge\\AtutorContainer\\": "src/"
+    }
+  },
+  "require": {
+    "illuminate/view": "^5.7.9",
+    "illuminate/config": "^5.7"
+  }
+}
