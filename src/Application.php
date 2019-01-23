@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Config\Repository as ConfigRepository;
 
+/**
+ * IoC Container adaptation specifically for use with blade.
+ * Allows object bindings to be created and resolved via the $app variable.
+ * 
+ */
+
+
 class Application extends Container {
     
     /**

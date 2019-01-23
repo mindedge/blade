@@ -1,21 +1,20 @@
 # Atutor Container
 
-Composer package to implement standalone blade via direct implemenation with illuminate\support
+Composer package to implement standalone blade via direct implemenation with illuminate\support. This package provides IoC container service, so that we may include other components down the road if desired. 
+
+The package is now hosted on packagist, which means adding the repository array is not longer nessisary. 
+
+https://packagist.org/packages/mindedge/atutor-container
 
 ## Installation
 
-Add the following Array To Your Composer.json File:
+You can use the below require statement from the command line in the root directory (assuming a composer.json already exists):
 
 ```
-"repositories": [
-        {
-            "type": "vcs",
-            "url": "git@gitlab.mindedgeuniversity.com:mmcgrath/atutor-container.git"
-        }
-    ]
+composer require mindedge/atutor-container
 ```
 
-Add the package to the application depencies:
+Alternativly, simply add to existing dependency to "require" object in composer.json,
 
 ```
 "require": {
@@ -23,11 +22,12 @@ Add the package to the application depencies:
 }
 ```
 
-Install the package and its dependencies from the repo
+And run 
 
 ```
 composer install
 ```
+## Usage:
 
 Within the root directory of atutor, create four directories. bootrap, config, and cache and views. (we can change this). New directories (relative to atutor codebase) are inside of the lines below.
 
