@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/mindedge/blade.svg?branch=master)](https://travis-ci.org/mindedge/blade)
+[![Coverage Status](https://coveralls.io/repos/mindedge/blade/badge.svg?branch=master&service=github)](https://coveralls.io/github/mindedge/blade?
+
+branch=master)
+
 # Mindedge Blade
 
 Composer package to implement standalone blade via direct implemenation with the illuminate\view laravel component. This package provides also IoC container service, so that we may include other components, dependecny injection, tests and lots of other fun stuff should we choose to do so down the road.
