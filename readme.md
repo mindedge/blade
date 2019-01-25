@@ -1,4 +1,4 @@
-# Atutor Container
+# Mindedge Blade
 
 Composer package to implement standalone blade via direct implemenation with the illuminate\view laravel component. This package provides also IoC container service, so that we may include other components, dependecny injection, tests and lots of other fun stuff should we choose to do so down the road.
 
@@ -29,7 +29,7 @@ composer install
 ```
 ## Usage:
 
-Within the root directory of atutor, create four directories. 
+Within the root directory of of your app, create four directories. 
 1. ROOTDIR/bootrap
 2. ROOTDIR/config
 3. ROOTDIR/cache
