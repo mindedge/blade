@@ -1,6 +1,6 @@
 <?php
 
-namespace Mindedge\AtutorContainer;
+namespace Mindedge\Blade;
 
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;

@@ -4,21 +4,21 @@ Composer package to implement standalone blade via direct implemenation with the
 
 The package is now hosted on packagist, which means adding the repository array is not longer nessisary. 
 
-https://packagist.org/packages/mindedge/atutor-container
+https://packagist.org/packages/mindedge/blade
 
 ## Installation
 
 You can use the below require statement from the command line in the root directory (assuming a composer.json already exists):
 
 ```
-composer require mindedge/atutor-container
+composer require mindedge/blade
 ```
 
 Alternativly, simply add to existing dependency to "require" object in composer.json,
 
 ```
 "require": {
-    "mindedge/atutor-container": "^2.0.0"
+    "mindedge/blade": "^1.0.0"
 }
 ```
 
@@ -53,7 +53,7 @@ In the newly crated boostrap directory, create a single file named app.php, with
 ```
 require_once __DIR__.'/../vendor/autoload.php';
 
-use  Mindedge\AtutorContainer\Application;
+use  Mindedge\Blade\Application;
 
 $app = new Application(
     realpath(__DIR__.'/../')
@@ -65,7 +65,7 @@ return $app;
 
 For now, we'll need to manually bring in the /vendor folder.
 
-Ideally, boostrap/app.php could go in a global include, so it only needs to be included once.
+Ideally, boostrap/app.php would go in a global include, so it only needs to be included once.
 
 In the newly created config directory, create a single file named view.php, and place the following starter config:
 
@@ -84,7 +84,7 @@ return [
 
 ```
 
-This tells blade where to look for files with .blade extensions, and where to put the compiled blade files. This can be altered at any time to make implemenation with atutor easier. As noted, 'paths' is an array and can contain referances to many file locations.
+This tells blade where to look for files with .blade extensions, and where to put the compiled blade files. This can be altered at any time to make implemenation with a legacy code base easier. As noted, 'paths' is an array and can contain referances to many file locations.
 
 The cache directory is where Blade automatically puts the "compiled" source code, so blade compliation only needs to occur when file changes are made.
 

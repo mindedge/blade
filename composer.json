@@ -1,6 +1,6 @@
 {
-  "name": "mindedge/atutor-container",
-  "description": "A Laravel Container wrapper for atutor",
+  "name": "mindedge/blade",
+  "description": "A standalone blade package that implementents a mini IoC container, and binds Illiminate\\view to it",
   "type": "library",
   "authors": [
     {
@@ -10,7 +10,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Mindedge\\AtutorContainer\\": "src/"
+      "Mindedge\\Blade\\": "src/"
     }
   },
   "require": {
