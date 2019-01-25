@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/mindedge/blade.svg?branch=master)](https://travis-ci.org/mindedge/blade)
-[![Coverage Status](https://coveralls.io/repos/mindedge/blade/badge.svg?branch=master&service=github)](https://coveralls.io/github/mindedge/blade?
+[![Coverage Status](https://coveralls.io/repos/mindedge/blade/badge.svg?branch=master&service=github)](https://coveralls.io/github/mindedge/blade?)
 
 branch=master)
 
