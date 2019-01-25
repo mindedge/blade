@@ -1,5 +1,7 @@
+language: php
+
 before_install:
-- composer require phpunit/phpunit:4.8.* satooshi/php-coveralls:dev-master
+- composer require phpunit/phpunit:~7.0 satooshi/php-coveralls:~2.0
 - composer install --dev
  
 script:
