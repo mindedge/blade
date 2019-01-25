@@ -1,0 +1,278 @@
+<?php
+$coverage = new SebastianBergmann\CodeCoverage\CodeCoverage;
+$coverage->setData(array (
+  '/Users/mmcgrath/www/blade/src/Application.php' => 
+  array (
+    75 => 
+    array (
+    ),
+    76 => 
+    array (
+    ),
+    77 => 
+    array (
+    ),
+    86 => 
+    array (
+    ),
+    88 => 
+    array (
+    ),
+    89 => 
+    array (
+    ),
+    91 => 
+    array (
+    ),
+    93 => 
+    array (
+    ),
+    95 => 
+    array (
+    ),
+    97 => 
+    array (
+    ),
+    98 => 
+    array (
+    ),
+    109 => 
+    array (
+    ),
+    111 => 
+    array (
+    ),
+    112 => 
+    array (
+    ),
+    114 => 
+    array (
+    ),
+    115 => 
+    array (
+    ),
+    116 => 
+    array (
+    ),
+    120 => 
+    array (
+    ),
+    123 => 
+    array (
+    ),
+    124 => NULL,
+    135 => 
+    array (
+    ),
+    136 => 
+    array (
+    ),
+    137 => 
+    array (
+    ),
+    149 => 
+    array (
+    ),
+    151 => 
+    array (
+    ),
+    152 => 
+    array (
+    ),
+    155 => 
+    array (
+    ),
+    156 => NULL,
+    164 => 
+    array (
+    ),
+    165 => 
+    array (
+    ),
+    166 => 
+    array (
+    ),
+    174 => 
+    array (
+    ),
+    175 => 
+    array (
+    ),
+    178 => 
+    array (
+    ),
+    180 => 
+    array (
+    ),
+    182 => 
+    array (
+    ),
+    183 => 
+    array (
+    ),
+    186 => 
+    array (
+    ),
+    198 => 
+    array (
+    ),
+    200 => 
+    array (
+    ),
+    201 => 
+    array (
+    ),
+    202 => 
+    array (
+    ),
+    203 => 
+    array (
+    ),
+    205 => 
+    array (
+    ),
+    208 => 
+    array (
+    ),
+    209 => NULL,
+    219 => 
+    array (
+    ),
+    220 => 
+    array (
+    ),
+    223 => 
+    array (
+    ),
+    224 => 
+    array (
+    ),
+    226 => 
+    array (
+    ),
+    229 => 
+    array (
+    ),
+    230 => NULL,
+    242 => 
+    array (
+    ),
+    243 => 
+    array (
+    ),
+    245 => 
+    array (
+    ),
+    246 => 
+    array (
+    ),
+    247 => 
+    array (
+    ),
+    248 => 
+    array (
+    ),
+    251 => 
+    array (
+    ),
+    252 => 
+    array (
+    ),
+    253 => 
+    array (
+    ),
+    254 => 
+    array (
+    ),
+    255 => 
+    array (
+    ),
+    258 => 
+    array (
+    ),
+    263 => 
+    array (
+    ),
+    264 => 
+    array (
+    ),
+    267 => 
+    array (
+    ),
+    268 => 
+    array (
+    ),
+    271 => 
+    array (
+    ),
+    273 => 
+    array (
+    ),
+    274 => 
+    array (
+    ),
+    277 => 
+    array (
+    ),
+    278 => 
+    array (
+    ),
+    280 => 
+    array (
+    ),
+    285 => 
+    array (
+    ),
+    286 => 
+    array (
+    ),
+    287 => 
+    array (
+    ),
+    297 => 
+    array (
+    ),
+    298 => 
+    array (
+    ),
+    299 => 
+    array (
+    ),
+    304 => 
+    array (
+    ),
+    306 => 
+    array (
+    ),
+    307 => 
+    array (
+    ),
+    308 => 
+    array (
+    ),
+    317 => 
+    array (
+    ),
+    318 => NULL,
+    327 => 
+    array (
+    ),
+    335 => 
+    array (
+    ),
+  ),
+));
+$coverage->setTests(array (
+  'UNCOVERED_FILES_FROM_WHITELIST' => 
+  array (
+    'size' => 'unknown',
+    'status' => -1,
+  ),
+));
+
+$filter = $coverage->filter();
+$filter->setWhitelistedFiles(array (
+  '/Users/mmcgrath/www/blade/src/Application.php' => true,
+));
+
+return $coverage;
