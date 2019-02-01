@@ -95,6 +95,8 @@ class Application extends Container {
         $this->registerContainerAliases();
 
         $this->registerViewBindings();
+
+        $this->withFacades();
     }
 
 
@@ -305,6 +307,46 @@ class Application extends Container {
 
             return $this->make('events');
         });
+    }
+
+    /**
+     * Register the facades for the application.
+     *
+     * @param  bool  $aliases
+     * @param  array $userAliases
+     * @return void
+     */
+    public function withFacades($aliases = true, $userAliases = [])
+    {
+        Facade::setFacadeApplication($this);
+
+        if ($aliases) {
+            $this->withAliases($userAliases);
+        }
+    }
+
+     /**
+     * Register the aliases for the application.
+     *
+     * @param  array  $userAliases
+     * @return void
+     */
+    public function withAliases($userAliases = []){
+        
+        $defaults = [
+            'Illuminate\Support\Facades\View' => 'View',
+        ];
+
+
+        if (! static::$aliasesRegistered) {
+            static::$aliasesRegistered = true;
+
+            $merged = array_merge($defaults, $userAliases);
+
+            foreach ($merged as $original => $alias) {
+                class_alias($original, $alias);
+            }
+        }
     }
     
     /**
