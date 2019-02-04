@@ -15,14 +15,10 @@ use Illuminate\Config\Repository as ConfigRepository;
  */
 
 
-class Application extends Container {
-    
-    /**
-     * The base path of the application installation.
-     *
-     * @var string
-     */
-    protected $basePath;
+class Application extends Container
+{
+    use Concerns\RoutesRequests,
+        Concerns\RegistersExceptionHandlers;
 
     /**
      * Indicates if the class aliases have been registered.
@@ -32,6 +28,13 @@ class Application extends Container {
     protected static $aliasesRegistered = false;
 
     /**
+     * The base path of the application installation.
+     *
+     * @var string
+     */
+    protected $basePath;
+
+    /**
      * All of the loaded configuration files.
      *
      * @var array
@@ -39,12 +42,11 @@ class Application extends Container {
     protected $loadedConfigurations = [];
 
     /**
-     * Create a new Atutor Application
+     * Indicates if the application has "booted".
      *
-     * @param  string|null  $basePath
-     * @return void
+     * @var bool
      */
-
+    protected $booted = false;
 
     /**
      * The loaded service providers.
@@ -52,12 +54,6 @@ class Application extends Container {
      * @var array
      */
     protected $loadedProviders = [];
-    
-        /**
-     * Indicates if the application has "booted".
-     *
-     * @var bool
-     */
 
     /**
      * The service binding methods that have been executed.
@@ -66,17 +62,40 @@ class Application extends Container {
      */
     protected $ranServiceBinders = [];
 
+    /**
+     * The application namespace.
+     *
+     * @var string
+     */
+    protected $namespace;
 
-    protected $booted = false;
-    
+    /**
+     * The Router instance.
+     *
+     * @var \Laravel\Lumen\Routing\Router
+     */
+    public $router;
+
+    /**
+     * Create a new Lumen application instance.
+     *
+     * @param  string|null  $basePath
+     * @return void
+     */
     public function __construct($basePath = null)
     {
-        //Setup the basepath and boostrap the container
+        if (! empty(env('APP_TIMEZONE'))) {
+            date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
+        }
+
         $this->basePath = $basePath;
+
         $this->bootstrapContainer();
+        $this->registerErrorHandling();
+        $this->bootstrapRouter();
     }
 
-     /**
+    /**
      * Bootstrap the application container.
      *
      * @return void
@@ -92,15 +111,18 @@ class Application extends Container {
 
         $this->instance('env', $this->environment());
 
-        $this->withEloquent();
-
         $this->registerContainerAliases();
-
-        $this->registerViewBindings();
-
-        $this->withFacades();
     }
 
+    /**
+     * Determine if the application is currently down for maintenance.
+     *
+     * @return bool
+     */
+    public function isDownForMaintenance()
+    {
+        return false;
+    }
 
     /**
      * Get or check the current application environment.
@@ -110,7 +132,7 @@ class Application extends Container {
      */
     public function environment()
     {
-        $env = env('APP_ENV');
+        $env = env('APP_ENV', config('app.env', 'production'));
 
         if (func_num_args() > 0) {
             $patterns = is_array(func_get_arg(0)) ? func_get_arg(0) : func_get_args();
@@ -127,9 +149,14 @@ class Application extends Container {
         return $env;
     }
 
+    /**
+     * Register a service provider with the application.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @return \Illuminate\Support\ServiceProvider
+     */
     public function register($provider)
     {
-
         if (! $provider instanceof ServiceProvider) {
             $provider = new $provider($this);
         }
@@ -189,6 +216,106 @@ class Application extends Container {
         }
     }
 
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param  string  $abstract
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function make($abstract, array $parameters = [])
+    {
+        $abstract = $this->getAlias($abstract);
+
+        if (! $this->bound($abstract) &&
+            array_key_exists($abstract, $this->availableBindings) &&
+            ! array_key_exists($this->availableBindings[$abstract], $this->ranServiceBinders)) {
+            $this->{$method = $this->availableBindings[$abstract]}();
+
+            $this->ranServiceBinders[$method] = true;
+        }
+
+        return parent::make($abstract, $parameters);
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerComposerBindings()
+    {
+        $this->singleton('composer', function ($app) {
+            return new Composer($app->make('files'), $this->basePath());
+        });
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerConfigBindings()
+    {
+        $this->singleton('config', function () {
+            return new ConfigRepository;
+        });
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerDatabaseBindings()
+    {
+        $this->singleton('db', function () {
+            return $this->loadComponent(
+                'database', [
+                    'Illuminate\Database\DatabaseServiceProvider',
+                    'Illuminate\Pagination\PaginationServiceProvider',
+                ], 'db'
+            );
+        });
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerEventBindings()
+    {
+        $this->singleton('events', function () {
+            $this->register('Illuminate\Events\EventServiceProvider');
+
+            return $this->make('events');
+        });
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerFilesBindings()
+    {
+        $this->singleton('files', function () {
+            return new Filesystem;
+        });
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerFilesystemBindings()
+    {
+        $this->singleton('filesystem', function () {
+            return $this->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
+        });
+    }
 
     /**
      * Register container bindings for the application.
@@ -222,31 +349,13 @@ class Application extends Container {
     }
 
     /**
-     * Load the Eloquent library for the application.
+     * Load a configuration file into the application.
      *
+     * @param  string  $name
      * @return void
-     */
-    public function withEloquent()
-    {
-        $this->make('db');
-    }
-
-    /**
-     * Bind application config overrides to container
-     */
-    protected function registerConfigBindings()
-    {
-        $this->singleton('config', function () {
-            return new ConfigRepository;
-        });
-    }
-
-    /**
-     * If service has application level config file, load it
      */
     public function configure($name)
     {
-
         if (isset($this->loadedConfigurations[$name])) {
             return;
         }
@@ -258,32 +367,99 @@ class Application extends Container {
         if ($path) {
             $this->make('config')->set($name, require $path);
         }
-
     }
 
     /**
-     * Resolve the given type from the container.
+     * Get the path to the given configuration file.
      *
-     * @param  string  $abstract
-     * @param  array  $parameters
-     * @return mixed
+     * If no name is provided, then we'll return the path to the config folder.
+     *
+     * @param  string|null  $name
+     * @return string
      */
-    public function make($abstract, array $parameters = [])
+    public function getConfigurationPath($name = null)
     {
-        $abstract = $this->getAlias($abstract);
+        if (! $name) {
+            $appConfigDir = $this->basePath('config').'/';
 
-        if (! $this->bound($abstract) &&
-            array_key_exists($abstract, $this->availableBindings) &&
-            ! array_key_exists($this->availableBindings[$abstract], $this->ranServiceBinders)) {
-            $this->{$method = $this->availableBindings[$abstract]}();
+            if (file_exists($appConfigDir)) {
+                return $appConfigDir;
+            } elseif (file_exists($path = __DIR__.'/../config/')) {
+                return $path;
+            }
+        } else {
+            $appConfigPath = $this->basePath('config').'/'.$name.'.php';
 
-            $this->ranServiceBinders[$method] = true;
+            if (file_exists($appConfigPath)) {
+                return $appConfigPath;
+            } elseif (file_exists($path = __DIR__.'/../config/'.$name.'.php')) {
+                return $path;
+            }
         }
-
-        return parent::make($abstract, $parameters);
     }
-    
-     /**
+
+    /**
+     * Register the facades for the application.
+     *
+     * @param  bool  $aliases
+     * @param  array $userAliases
+     * @return void
+     */
+    public function withFacades($aliases = true, $userAliases = [])
+    {
+        Facade::setFacadeApplication($this);
+
+        if ($aliases) {
+            $this->withAliases($userAliases);
+        }
+    }
+
+    /**
+     * Register the aliases for the application.
+     *
+     * @param  array  $userAliases
+     * @return void
+     */
+    public function withAliases($userAliases = [])
+    {
+        $defaults = [
+            'Illuminate\Support\Facades\DB' => 'DB',
+            'Illuminate\Support\Facades\Schema' => 'Schema',
+            'Illuminate\Support\Facades\Storage' => 'Storage',
+        ];
+
+        if (! static::$aliasesRegistered) {
+            static::$aliasesRegistered = true;
+
+            $merged = array_merge($defaults, $userAliases);
+
+            foreach ($merged as $original => $alias) {
+                class_alias($original, $alias);
+            }
+        }
+    }
+
+    /**
+     * Load the Eloquent library for the application.
+     *
+     * @return void
+     */
+    public function withEloquent()
+    {
+        $this->make('db');
+    }
+
+    /**
+     * Get the path to the application "app" directory.
+     *
+     * @return string
+     */
+    public function path()
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'app';
+    }
+
+    /**
      * Get the base path for the application.
      *
      * @param  string|null  $path
@@ -316,127 +492,49 @@ class Application extends Container {
     }
 
     /**
-     * Get the path to the given configuration file.
+     * Get the storage path for the application.
      *
-     * If no name is provided, then we'll return the path to the config folder.
-     *
-     * @param  string|null  $name
+     * @param  string|null  $path
      * @return string
      */
-    public function getConfigurationPath($name = null)
+    public function storagePath($path = '')
     {
-        if (! $name) {
-            $appConfigDir = $this->basePath('config').'/';
-            
-            if (file_exists($appConfigDir)) {
-                return $appConfigDir;
-            } elseif (file_exists($path = __DIR__.'/../config/')) {
-                return $path;
-            }
-        } else {
-            $appConfigPath = $this->basePath('config').'/'.$name.'.php';
-            if (file_exists($appConfigPath)) {
-                return $appConfigPath;
-            } elseif (file_exists($path = __DIR__.'/../config/'.$name.'.php')) {
-                return $path;
-            }
-        }
+        return $this->basePath().'/storage'.($path ? '/'.$path : $path);
     }
 
-    protected function registerFilesBindings()
-    {
-        $this->singleton('files', function () {
-            return new Filesystem;
-        });
-    }
-    
     /**
-     * Register container bindings for the application.
+     * Determine if the application is running in the console.
      *
-     * @return void
+     * @return bool
      */
-    protected function registerFilesystemBindings()
+    public function runningInConsole()
     {
-        $this->singleton('filesystem', function () {
-            return $this->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
-        });
-    }
-
-    protected function registerEventBindings()
-    {
-        $this->singleton('events', function () {
-            $this->register('Illuminate\Events\EventServiceProvider');
-
-            return $this->make('events');
-        });
+        return php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg';
     }
 
     /**
-     * Register container bindings for the application.
+     * Determine if we are running unit tests.
      *
-     * @return void
+     * @return bool
      */
-    protected function registerDatabaseBindings()
+    public function runningUnitTests()
     {
-        $this->singleton('db', function () {
-            return $this->loadComponent(
-                'database', [
-                    'Illuminate\Database\DatabaseServiceProvider',
-                ], 'db'
-            );
-        });
+        return $this->environment() == 'testing';
     }
 
-
     /**
-     * Register the facades for the application.
+     * Prepare the application to execute a console command.
      *
      * @param  bool  $aliases
-     * @param  array $userAliases
      * @return void
      */
-    public function withFacades($aliases = true, $userAliases = [])
+    public function prepareForConsoleCommand($aliases = true)
     {
-        Facade::setFacadeApplication($this);
+        $this->withFacades($aliases);
 
-        if ($aliases) {
-            $this->withAliases($userAliases);
-        }
-    }
+        $this->configure('database');
 
-     /**
-     * Register the aliases for the application.
-     *
-     * @param  array  $userAliases
-     * @return void
-     */
-    public function withAliases($userAliases = []){
-        
-        $defaults = [
-            'Illuminate\Support\Facades\View' => 'View',
-            'Illuminate\Support\Facades\DB' => 'DB',
-        ];
-
-
-        if (! static::$aliasesRegistered) {
-            static::$aliasesRegistered = true;
-
-            $merged = array_merge($defaults, $userAliases);
-
-            foreach ($merged as $original => $alias) {
-                class_alias($original, $alias);
-            }
-        }
-    }
-    
-    /**
-     * Get the path to the application "app" directory.
-     *
-     * @return string
-     */
-    public function path()
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'app';
+        $this->register('Illuminate\Database\MigrationServiceProvider');
     }
 
     /**
@@ -466,6 +564,31 @@ class Application extends Container {
     }
 
     /**
+     * Flush the container of all bindings and resolved instances.
+     *
+     * @return void
+     */
+    public function flush()
+    {
+        parent::flush();
+
+        $this->middleware = [];
+        $this->currentRoute = [];
+        $this->loadedProviders = [];
+        $this->routeMiddleware = [];
+        $this->reboundCallbacks = [];
+        $this->resolvingCallbacks = [];
+        $this->availableBindings = [];
+        $this->ranServiceBinders = [];
+        $this->loadedConfigurations = [];
+        $this->afterResolvingCallbacks = [];
+
+        $this->router = null;
+        $this->dispatcher = null;
+        static::$instance = null;
+    }
+
+    /**
      * Register the core container aliases.
      *
      * @return void
@@ -474,23 +597,27 @@ class Application extends Container {
     {
         $this->aliases = [
             'Illuminate\Contracts\Foundation\Application' => 'app',
+            'Illuminate\Contracts\Config\Repository' => 'config',
             'Illuminate\Container\Container' => 'app',
             'Illuminate\Contracts\Container\Container' => 'app',
-            'Illuminate\Contracts\Config\Repository' => 'config',
-            'Illuminate\Contracts\View\Factory' => 'view',
-            'Illuminate\Contracts\Events\Dispatcher' => 'events',
             'Illuminate\Database\ConnectionResolverInterface' => 'db',
             'Illuminate\Database\DatabaseManager' => 'db',
+            'Illuminate\Contracts\View\Factory' => 'view',
         ];
     }
 
+    /**
+     * The available container bindings and their respective load methods.
+     *
+     * @var array
+     */
     public $availableBindings = [
-        'view' => 'registerViewBindings',
-        'Illuminate\Contracts\View\Factory' => 'registerViewBindings',
+        'composer' => 'registerComposerBindings',
         'config' => 'registerConfigBindings',
-        'files' => 'registerFilesBindings',
-        'events' => 'registerEventBindings',
         'db' => 'registerDatabaseBindings',
         'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
+        'filesystem' => 'registerFilesystemBindings',
+        'view' => 'registerViewBindings',
+        'Illuminate\Contracts\View\Factory' => 'registerViewBindings',
     ];
 }
