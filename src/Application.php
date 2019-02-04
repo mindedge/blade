@@ -127,6 +127,55 @@ class Application extends Container {
         return $env;
     }
 
+    public function register($provider)
+    {
+
+        if (! $provider instanceof ServiceProvider) {
+            $provider = new $provider($this);
+        }
+
+        if (array_key_exists($providerName = get_class($provider), $this->loadedProviders)) {
+            return;
+        }
+
+        $this->loadedProviders[$providerName] = $provider;
+
+        if (method_exists($provider, 'register')) {
+            $provider->register();
+        }
+
+        if ($this->booted) {
+            $this->bootProvider($provider);
+        }
+    }
+
+    /**
+     * Register a deferred provider and service.
+     *
+     * @param  string  $provider
+     * @return void
+     */
+    public function registerDeferredProvider($provider)
+    {
+        return $this->register($provider);
+    }
+
+    /**
+     * Boots the registered providers.
+     */
+    public function boot()
+    {
+        if ($this->booted) {
+            return;
+        }
+
+        array_walk($this->loadedProviders, function ($p) {
+            $this->bootProvider($p);
+        });
+
+        $this->booted = true;
+    }
+
 
     /**
      * Register container bindings for the application.
@@ -198,7 +247,6 @@ class Application extends Container {
         }
 
     }
-
 
     /**
      * Resolve the given type from the container.
@@ -279,28 +327,6 @@ class Application extends Container {
             } elseif (file_exists($path = __DIR__.'/../config/'.$name.'.php')) {
                 return $path;
             }
-        }
-    }
-
-    public function register($provider)
-    {
-
-        if (! $provider instanceof ServiceProvider) {
-            $provider = new $provider($this);
-        }
-
-        if (array_key_exists($providerName = get_class($provider), $this->loadedProviders)) {
-            return;
-        }
-
-        $this->loadedProviders[$providerName] = $provider;
-
-        if (method_exists($provider, 'register')) {
-            $provider->register();
-        }
-
-        if ($this->booted) {
-            $this->bootProvider($provider);
         }
     }
 
@@ -398,6 +424,32 @@ class Application extends Container {
     public function path()
     {
         return $this->basePath.DIRECTORY_SEPARATOR.'app';
+    }
+
+    /**
+     * Get the application namespace.
+     *
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function getNamespace()
+    {
+        if (! is_null($this->namespace)) {
+            return $this->namespace;
+        }
+
+        $composer = json_decode(file_get_contents(base_path('composer.json')), true);
+
+        foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
+            foreach ((array) $path as $pathChoice) {
+                if (realpath(app()->path()) == realpath(base_path().'/'.$pathChoice)) {
+                    return $this->namespace = $namespace;
+                }
+            }
+        }
+
+        throw new RuntimeException('Unable to detect application namespace.');
     }
 
     /**
