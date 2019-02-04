@@ -310,6 +310,24 @@ class Application extends Container {
     }
 
     /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerDatabaseBindings()
+    {
+        $this->singleton('db', function () {
+            return $this->loadComponent(
+                'database', [
+                    'Illuminate\Database\DatabaseServiceProvider',
+                    'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
+                ], 'db'
+            );
+        });
+    }
+
+
+    /**
      * Register the facades for the application.
      *
      * @param  bool  $aliases
@@ -373,6 +391,8 @@ class Application extends Container {
             'Illuminate\Contracts\Config\Repository' => 'config',
             'Illuminate\Contracts\View\Factory' => 'view',
             'Illuminate\Contracts\Events\Dispatcher' => 'events',
+            'Illuminate\Database\ConnectionResolverInterface' => 'db',
+            'Illuminate\Database\DatabaseManager' => 'db',
         ];
     }
 
@@ -382,6 +402,7 @@ class Application extends Container {
         'config' => 'registerConfigBindings',
         'files' => 'registerFilesBindings',
         'events' => 'registerEventBindings',
-
+        'db' => 'registerDatabaseBindings',
+        'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
     ];
 }
