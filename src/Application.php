@@ -232,6 +232,17 @@ class Application extends Container {
     }
 
     /**
+     * Get the path to the database directory.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    public function databasePath($path = '')
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'database'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+
+    /**
      * Get the path to the given configuration file.
      *
      * If no name is provided, then we'll return the path to the config folder.
@@ -320,7 +331,6 @@ class Application extends Container {
             return $this->loadComponent(
                 'database', [
                     'Illuminate\Database\DatabaseServiceProvider',
-                    'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
                 ], 'db'
             );
         });
@@ -353,6 +363,7 @@ class Application extends Container {
         
         $defaults = [
             'Illuminate\Support\Facades\View' => 'View',
+            'Illuminate\Support\Facades\DB' => 'DB',
         ];
 
 
