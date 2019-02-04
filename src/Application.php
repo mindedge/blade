@@ -92,6 +92,8 @@ class Application extends Container {
 
         $this->instance('env', $this->environment());
 
+        $this->withEloquent();
+
         $this->registerContainerAliases();
 
         $this->registerViewBindings();
@@ -155,6 +157,16 @@ class Application extends Container {
         }
 
         return $this->make($return ?: $config);
+    }
+
+    /**
+     * Load the Eloquent library for the application.
+     *
+     * @return void
+     */
+    public function withEloquent()
+    {
+        $this->make('db');
     }
 
     /**
