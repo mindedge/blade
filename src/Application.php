@@ -17,8 +17,6 @@ use Illuminate\Config\Repository as ConfigRepository;
 
 class Application extends Container
 {
-    use Concerns\RoutesRequests,
-        Concerns\RegistersExceptionHandlers;
 
     /**
      * Indicates if the class aliases have been registered.
