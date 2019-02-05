@@ -248,6 +248,20 @@ class Application extends Container
      *
      * @return void
      */
+    protected function registerEventBindings()
+    {
+        $this->singleton('events', function () {
+            $this->register('Illuminate\Events\EventServiceProvider');
+
+            return $this->make('events');
+        });
+    }
+
+    /**
+     * Register container bindings for the application.
+     *
+     * @return void
+     */
     protected function registerDatabaseBindings()
     {
         $this->singleton('db', function () {
@@ -589,6 +603,7 @@ class Application extends Container
             'Illuminate\Contracts\Container\Container' => 'app',
             'Illuminate\Database\ConnectionResolverInterface' => 'db',
             'Illuminate\Database\DatabaseManager' => 'db',
+            'Illuminate\Contracts\Events\Dispatcher' => 'events',
             'Illuminate\Contracts\View\Factory' => 'view',
         ];
     }
@@ -605,6 +620,8 @@ class Application extends Container
         'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
         'filesystem' => 'registerFilesystemBindings',
         'Illuminate\Contracts\Filesystem\Factory' => 'registerFilesystemBindings',
+        'events' => 'registerEventBindings',
+        'Illuminate\Contracts\Events\Dispatcher' => 'registerEventBindings',
         'files' => 'registerFilesBindings',
         'view' => 'registerViewBindings',
         'Illuminate\Contracts\View\Factory' => 'registerViewBindings',
