@@ -2,18 +2,13 @@
 
 namespace Mindedge\Blade;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Composer;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Contracts\Config\Repository;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Config\Repository as ConfigRepository;
-
-/**
- * IoC Container adaptation specifically for use with blade.
- * Allows object bindings to be created and resolved via the $app variable.
- * 
- */
-
 
 class Application extends Container
 {
@@ -110,16 +105,6 @@ class Application extends Container
         $this->instance('env', $this->environment());
 
         $this->registerContainerAliases();
-    }
-
-    /**
-     * Determine if the application is currently down for maintenance.
-     *
-     * @return bool
-     */
-    public function isDownForMaintenance()
-    {
-        return false;
     }
 
     /**
@@ -274,20 +259,6 @@ class Application extends Container
                     'Illuminate\Pagination\PaginationServiceProvider',
                 ], 'db'
             );
-        });
-    }
-
-    /**
-     * Register container bindings for the application.
-     *
-     * @return void
-     */
-    protected function registerEventBindings()
-    {
-        $this->singleton('events', function () {
-            $this->register('Illuminate\Events\EventServiceProvider');
-
-            return $this->make('events');
         });
     }
 
@@ -501,6 +472,27 @@ class Application extends Container
     }
 
     /**
+     * Get the path to the resources directory.
+     *
+     * @param  string|null  $path
+     * @return string
+     */
+    public function resourcePath($path = '')
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+
+    /**
+     * Determine if the application routes are cached.
+     *
+     * @return bool
+     */
+    public function routesAreCached()
+    {
+        return false;
+    }
+
+    /**
      * Determine if the application is running in the console.
      *
      * @return bool
@@ -595,7 +587,6 @@ class Application extends Container
     {
         $this->aliases = [
             'Illuminate\Contracts\Foundation\Application' => 'app',
-            'Illuminate\Contracts\Config\Repository' => 'config',
             'Illuminate\Container\Container' => 'app',
             'Illuminate\Contracts\Container\Container' => 'app',
             'Illuminate\Database\ConnectionResolverInterface' => 'db',
@@ -615,6 +606,8 @@ class Application extends Container
         'db' => 'registerDatabaseBindings',
         'Illuminate\Database\Eloquent\Factory' => 'registerDatabaseBindings',
         'filesystem' => 'registerFilesystemBindings',
+        'Illuminate\Contracts\Filesystem\Factory' => 'registerFilesystemBindings',
+        'files' => 'registerFilesBindings',
         'view' => 'registerViewBindings',
         'Illuminate\Contracts\View\Factory' => 'registerViewBindings',
     ];
