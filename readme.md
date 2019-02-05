@@ -1,4 +1,4 @@
-[![Latest Version](https://img.shields.io/github/release/mindedge/blade.svg?style=flat-square)](https://github.com/mindedge/blade/releases)
+[![Latest Version](https://img.shields.io/github/release/mindedge/blade.svg)](https://github.com/mindedge/blade/releases)
 [![Build Status](https://travis-ci.org/mindedge/blade.svg?branch=master)](https://travis-ci.org/mindedge/blade)
 [![Coverage Status](https://coveralls.io/repos/github/mindedge/blade/badge.svg?branch=master)](https://coveralls.io/github/mindedge/blade?branch=master)
 
@@ -34,7 +34,7 @@ Alternativly, simply add to existing dependency to "require" object in composer.
 
 ```
 "require": {
-    "mindedge/blade": "^1.0.0"
+    "mindedge/blade": "^2.0.0"
 }
 ```
 
@@ -43,13 +43,16 @@ And then run
 ```
 composer install
 ```
-## Configuration:
+# Configuration:
 
-Within the root directory of of your app, create four directories. I have used the "ROOTDIR" to denote the application root. 
+Within the root directory of of your app, create four directories. I have used the "ROOTDIR" to denote the application root.
+
 1. ROOTDIR/bootrap
 2. ROOTDIR/config
 3. ROOTDIR/cache
 4. ROOTDIR/views
+
+Note: the 'views' directory will correspond to wherever your application holds its presentation layer files and is configurable. You may name/change the views directory to whatever makes sense for your application.
 
 You should wind up with something like this:
 
@@ -84,6 +87,10 @@ $app->boot();
 return $app;
 
 ```
+
+>Note:   
+> If you do not plan on using the view, database, or config facades, you may comment '$app->withFacades out'.  
+> To use eloquent, Simply uncomment '$app->withEloquent'. If using you plan on using Models, make sure to add a psr4 entry in your composer.json to thier location.   
 
 This example shows the autoload script being included, but as long as vendor/autoload.php is included somewhere in the project thats globally accessable, thats a fine approach as well. 
 
@@ -279,3 +286,12 @@ For further help and documenation, see the below links:
 [The Laravel Database Docs](https://laravel.com/docs/5.7/database)
 
 
+# Additional Services
+
+1. Service Providers - This package allows you to register additional services and bind them into the IoC container via a Provider. To register a service, call the register method in the bootstrap/app file. 
+```
+//boostrap/app.php 
+
+$app->register('Acme\Company\AcmeServiceProvider');
+
+```
