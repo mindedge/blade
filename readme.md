@@ -1,7 +1,6 @@
 [![Latest Version](https://img.shields.io/github/release/mindedge/blade.svg?style=flat-square)](https://github.com/mindedge/blade/releases)
 [![Build Status](https://travis-ci.org/mindedge/blade.svg?branch=master)](https://travis-ci.org/mindedge/blade)
-[![Coverage Status](https://coveralls.io/repos/mindedge/blade/badge.svg?branch=master&service=github)](https://coveralls.io/github/mindedge/blade?branch=master)
-
+[![Coverage Status](https://coveralls.io/repos/github/mindedge/blade/badge.svg?branch=master)](https://coveralls.io/github/mindedge/blade?branch=master)
 
 # Mindedge Blade
 
