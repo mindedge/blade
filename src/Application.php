@@ -63,13 +63,6 @@ class Application extends Container
     protected $namespace;
 
     /**
-     * The Router instance.
-     *
-     * @var \Laravel\Lumen\Routing\Router
-     */
-    public $router;
-
-    /**
      * Create a new Lumen application instance.
      *
      * @param  string|null  $basePath
@@ -407,6 +400,7 @@ class Application extends Container
             'Illuminate\Support\Facades\DB' => 'DB',
             'Illuminate\Support\Facades\Schema' => 'Schema',
             'Illuminate\Support\Facades\Storage' => 'Storage',
+            'Illuminate\Support\Facades\View' => 'View',
         ];
 
         if (! static::$aliasesRegistered) {
@@ -492,16 +486,6 @@ class Application extends Container
     public function resourcePath($path = '')
     {
         return $this->basePath.DIRECTORY_SEPARATOR.'resources'.($path ? DIRECTORY_SEPARATOR.$path : $path);
-    }
-
-    /**
-     * Determine if the application routes are cached.
-     *
-     * @return bool
-     */
-    public function routesAreCached()
-    {
-        return false;
     }
 
     /**

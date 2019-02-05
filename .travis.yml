@@ -1,8 +1,7 @@
 language: php
 php:
   - 7.2
-
-
+  
 before_install:
 - composer require phpunit/phpunit:~7.0 satooshi/php-coveralls:~2.0
 - composer install --dev

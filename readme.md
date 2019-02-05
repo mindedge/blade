@@ -73,8 +73,14 @@ require_once __DIR__.'/../vendor/autoload.php';
 use  Mindedge\Blade\Application;
 
 $app = new Application(
-    realpath(__DIR__.'/../')
+    dirname(__DIR__)
 );
+
+$app->withFacades();
+
+//$app->withEloquent();
+
+$app->boot();
 
 return $app;
 
@@ -100,12 +106,13 @@ return [
 
 ```
 
-This config file contains an array with two keys.   
+This config file configures the View library (Blade) and contains an array with two keys.   
 
-1. 'paths' - Represents where the Illuminate\view service should look for files. Accepted file types for this directory are .php and .blade.php
+1. 'paths' - Represents where the Illuminate\view service should look for files. Accepted file types for this directory are .php and .blade.php. You may add as my locations to the paths array as you like.
+
 2. 'compiled' - Represents where the compiled/resolved views should go. If the a given file hasnt changed, View will skip the complication step and read the compiled contents of the corresponding file from this folder. Make sure this folder is writable by the application/web user. 
 
-Add another config file, this time for Illuminate\database. Inside the config directory create a single file named database.php, and place the following starter config:
+Add another config file, for the Database library (including eloquent). Inside the config directory create a single file named database.php, and place the following starter config:
 
 ```
 <?php
@@ -241,7 +248,7 @@ return [
 ];
 ```
 
-All database configuration values should be defined in .env files, with a localhost default backup if nessisary. More information reguarding configuration can be found on the [Official Laravel Docs Site](https://laravel.com/docs/5.7/database) 
+All database configuration values should be defined in .env files, with a localhost default backup defined in the config file if nessisary. More information reguarding configuration can be found on the [Official Laravel Docs Site](https://laravel.com/docs/5.7/database) 
 
 
 Assuming all above steps were followed correctly, you should have a directory structure that looks something simliar to this:
@@ -266,7 +273,10 @@ Assuming all above steps were followed correctly, you should have a directory st
 
 Include boostrap/app.php in you applications entry point, somewhere thats is globally included or autoloaded, and uou are now ready to use all three services this package provides. 
 
+For further help and documenation, see the below links:
+
 [The Laravel Blade Docs.](https://laravel.com/docs/5.7/blade)
 
 [The Laravel Database Docs](https://laravel.com/docs/5.7/database)
+
 
