@@ -84,8 +84,6 @@ class Application extends Container
         $this->basePath = $basePath;
 
         $this->bootstrapContainer();
-        $this->registerErrorHandling();
-        $this->bootstrapRouter();
     }
 
     /**
