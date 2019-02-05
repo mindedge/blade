@@ -82,6 +82,9 @@ $app->withFacades();
 
 //$app->withEloquent();
 
+
+
+//Nothing Below These Two Lines!
 $app->boot();
 
 return $app;
@@ -288,10 +291,28 @@ For further help and documenation, see the below links:
 
 # Additional Services
 
-1. Service Providers - This package allows you to register additional services and bind them into the IoC container via a Provider. To register a service, call the register method in the bootstrap/app file. 
+1. Service Providers - This package allows you to register additional services and bind them into the IoC container via a Provider. To register a service, call the register method in the bootstrap/app file. The service class file, and the service provider file must live in a location that is psr4 autoloaded.
+
 ```
 //boostrap/app.php 
 
 $app->register('Acme\Company\AcmeServiceProvider');
 
 ```
+
+2. Facades - If you've created a facade for you're own service, or want to register the facade that came with a different package, you may doing so by passing the references into the 'withFacades' method. The class you are registering a facade for must live in a directory that is psr4 autoloaded. 
+
+```
+//bootstrap/app.php
+
+$app->withFacades(true, ['Acme\Company\AcmeService' => 'AcmeService']);
+```
+
+3. Config Files - If you've created a custom service, and want to use a config file, or are using a 3rd party package that uses config file, you may create and register it with the application. In your config directory, create or import the config file. To register the config with the application, use the configure method.
+
+```
+//bootstrap/app.php
+
+$app->configure('name_of_config_file');
+```
+
