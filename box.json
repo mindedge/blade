@@ -1,0 +1,6 @@
+{
+    "main": "src/Application.php",
+    "output": "mindedgeblade.phar",
+    "directories": ["src"],
+    "files": ["composer.json", "composer-lock", ".gitignore"]
+}
