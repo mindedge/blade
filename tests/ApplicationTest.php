@@ -1,5 +1,7 @@
 <?php
 
+namespace Mindedge\Blade\Tests;
+
 use Mindedge\Blade\Application;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Support\ServiceProvider;

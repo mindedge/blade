@@ -1,14 +1,25 @@
 language: php
 php:
-  - 7.2
-  
+- 7.3
 before_install:
-- composer require phpunit/phpunit:~7.0 satooshi/php-coveralls:~2.0
+- composer require phpunit/phpunit:~7.0 satooshi/php-coveralls:^2.1
 - composer install --dev
- 
 script:
 - mkdir -p build/logs
 - php vendor/bin/phpunit -c phpunit.xml.dist
- 
 after_script:
 - php vendor/bin/php-coveralls -v
+
+before_deploy:
+- composer install --prefer-dist --no-dev --no-interaction
+- php box.phar build
+
+deploy:
+  provider: releases
+  api_key:
+    secure: TeDn9LsrF4Up5vFHaWVKMjmYPp5l5GqjFV5d9dh8iQrRWMRgGd3eRgdnhsFgRbWrVssqrrG1LasU4AP+VFxgVGTAegEnmmZhAtpdIOtFFdGd5n0vaZfoHz8r8MJsjjSkkPOJ76RjfBjXe9duY+SPQjIWncRZo2j9uhoq69qQ+bv0Hkt7Mlx9u/9FbI4qXh4ckseXtOTXgcdehJgubhKrMqUuIo3p5H8Q0x0UaXdvjzfxzHyQjJI96zrTrUIgImnoUeP9Q6F+uEKx2vavooOAmDEKDGDPN46+5y/LqMNFULvkjYgLpTAMH2K/iQODnMUwEOmhlO3l+khHZcSc2qCuC0EeU+ESnkbYHX5pyXHZxWMaoSZfzFQcfqTnN1zX1nxtJqsTERO1ljLbNgiWdGUq60m6kdcxjHU34pxl4F6KG/EI2E+ufaoiirVZ3o0wuKtzoJX5nK2s7oQAqgCvDHqvRr5ie8fwYHWm+tP9Mz6hlxzz9t2dptaGqgysOgag8sn03Y9G41EbZ7EJRkyLdrihRHMJrj7xmoj8RqPeUKQYv7eLSgnZfmSQ4SdgV0izqsgjlt8GmO8ciP3R4fjbCtnwFMWAEpURaN9J5+Z7iYN5EScJo92eFagDTa3rYrPdUTTF2dIdjyncFfSZZoxGx18KAgrnSXmPSwN5YtRnhNPjPHQ=
+  file: mindedgeblade.phar
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: mindedge/blade
